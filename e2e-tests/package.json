@@ -8,6 +8,8 @@
     "test:headed": "npx playwright test --headed"
   },
   "devDependencies": {
-    "@playwright/test": "^1.45.0"
+    "@playwright/test": "^1.45.0",
+    "@types/jsonwebtoken": "^9.0.0",
+    "jsonwebtoken": "^9.0.0"
   }
 }

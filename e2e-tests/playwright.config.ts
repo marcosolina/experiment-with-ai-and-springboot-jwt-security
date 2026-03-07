@@ -9,8 +9,10 @@ export default defineConfig({
   reporter: 'html',
   use: {
     baseURL: 'http://localhost:5173',
+    headless: false,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    video: 'on',
   },
   projects: [
     {

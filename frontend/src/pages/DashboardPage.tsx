@@ -5,6 +5,14 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { Routes } from '../constants'
 
+/**
+ * Dashboard page component that displays the authenticated user's profile.
+ *
+ * Shows the username and assigned roles as badges, along with a navigation
+ * button to the messages page.
+ *
+ * @returns The user profile dashboard UI.
+ */
 export default function DashboardPage() {
   const { user } = useAuth()
   const navigate = useNavigate()

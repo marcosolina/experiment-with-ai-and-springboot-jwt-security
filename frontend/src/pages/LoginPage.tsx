@@ -7,6 +7,14 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { Routes } from '../constants'
 
+/**
+ * Login page component that renders a username/password form.
+ *
+ * On successful authentication, navigates the user to the dashboard.
+ * Displays an inline error alert when login fails.
+ *
+ * @returns The login form UI.
+ */
 export default function LoginPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')

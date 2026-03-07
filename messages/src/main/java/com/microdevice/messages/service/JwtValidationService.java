@@ -24,19 +24,49 @@ import java.security.spec.RSAPublicKeySpec;
 import java.time.Duration;
 import java.util.Base64;
 
+/**
+ * Core JWT validation service that supports both RS256 (supervisor-issued) and
+ * HS256 (shared-secret) tokens.
+ *
+ * <p>On startup, this service attempts to fetch the supervisor's JWKS. If the
+ * supervisor is unreachable, the service enters fallback mode and only accepts
+ * shared-secret tokens. The JWKS is periodically refreshed via a
+ * {@link Scheduled @Scheduled} method.</p>
+ *
+ * <p>Token validation is routed based on the {@code iss} claim extracted from the
+ * JWT payload before signature verification.</p>
+ */
 @Service
 public class JwtValidationService {
 
+    /** Logger for this service. */
     private static final Logger log = LoggerFactory.getLogger(JwtValidationService.class);
 
+    /** JWT configuration properties (supervisor and shared-secret settings). */
     private final JwtConfig jwtConfig;
+
+    /** HMAC secret key derived from the configured Base64-encoded shared secret. */
     private final SecretKey sharedSecretKey;
+
+    /** Jackson ObjectMapper instantiated directly (not injected; see Spring Boot 4 note). */
     private final ObjectMapper objectMapper;
+
+    /** HTTP client used to fetch the supervisor's JWKS endpoint. */
     private final HttpClient httpClient;
 
+    /** RSA public key fetched from the supervisor's JWKS. May be {@code null} if unavailable. */
     private volatile RSAPublicKey supervisorPublicKey;
+
+    /** Indicates whether the supervisor auth server is currently reachable. */
     private volatile boolean supervisorAvailable;
 
+    /**
+     * Constructs the service, initializes the shared-secret key, and attempts to
+     * fetch the supervisor's JWKS. If the supervisor is unreachable, fallback mode
+     * is activated.
+     *
+     * @param jwtConfig the JWT configuration properties
+     */
     public JwtValidationService(JwtConfig jwtConfig) {
         this.jwtConfig = jwtConfig;
         this.objectMapper = new ObjectMapper();
@@ -57,6 +87,12 @@ public class JwtValidationService {
         }
     }
 
+    /**
+     * Fetches the RSA public key from the supervisor's JWKS endpoint and updates
+     * the cached key and availability flag.
+     *
+     * @throws Exception if the JWKS endpoint is unreachable or returns invalid data
+     */
     private void fetchSupervisorPublicKey() throws Exception {
         String jwksUrl = jwtConfig.getSupervisor().getJwksUrl();
 
@@ -93,6 +129,13 @@ public class JwtValidationService {
         this.supervisorAvailable = true;
     }
 
+    /**
+     * Periodically refreshes the supervisor's RSA public key from the JWKS endpoint.
+     *
+     * <p>The interval is configured via {@code jwt.supervisor.jwks-refresh-interval}.
+     * If the supervisor becomes available after being down, an informational log is emitted.
+     * If the refresh fails while a cached key exists, the cached key remains in use.</p>
+     */
     @Scheduled(fixedDelayString = "${jwt.supervisor.jwks-refresh-interval}")
     public void refreshSupervisorKey() {
         try {
@@ -109,6 +152,14 @@ public class JwtValidationService {
         }
     }
 
+    /**
+     * Validates a JWT token by routing to the appropriate validation method based on
+     * the {@code iss} (issuer) claim.
+     *
+     * @param token the raw JWT string (without the "Bearer " prefix)
+     * @return the validated claims from the token
+     * @throws RuntimeException if the issuer is unknown or validation fails
+     */
     public Claims validateToken(String token) {
         String issuer = extractIssuerWithoutValidation(token);
 
@@ -121,6 +172,13 @@ public class JwtValidationService {
         }
     }
 
+    /**
+     * Validates an RS256-signed token issued by the supervisor auth server.
+     *
+     * @param token the raw JWT string
+     * @return the validated claims
+     * @throws RuntimeException if the supervisor public key is unavailable or validation fails
+     */
     private Claims validateSupervisorToken(String token) {
         if (supervisorPublicKey == null) {
             throw new RuntimeException("Supervisor is unavailable, cannot validate supervisor-issued tokens");
@@ -134,6 +192,13 @@ public class JwtValidationService {
             .getPayload();
     }
 
+    /**
+     * Validates an HS256-signed token using the shared secret key.
+     *
+     * @param token the raw JWT string
+     * @return the validated claims
+     * @throws RuntimeException if validation fails
+     */
     private Claims validateSharedSecretToken(String token) {
         return Jwts.parser()
             .verifyWith(sharedSecretKey)
@@ -143,6 +208,16 @@ public class JwtValidationService {
             .getPayload();
     }
 
+    /**
+     * Extracts the {@code iss} claim from a JWT without verifying its signature.
+     *
+     * <p>This is used to determine which validation strategy to apply before
+     * performing full signature verification.</p>
+     *
+     * @param token the raw JWT string
+     * @return the issuer string from the token payload
+     * @throws RuntimeException if the token format is invalid or the issuer claim is missing
+     */
     private String extractIssuerWithoutValidation(String token) {
         try {
             String[] parts = token.split("\\.");
@@ -163,6 +238,11 @@ public class JwtValidationService {
         }
     }
 
+    /**
+     * Returns whether the supervisor auth server is currently reachable.
+     *
+     * @return {@code true} if the supervisor's JWKS was successfully fetched, {@code false} otherwise
+     */
     public boolean isSupervisorAvailable() {
         return supervisorAvailable;
     }

@@ -8,6 +8,16 @@ import { useAuth } from './context/AuthContext'
 import { Box } from '@chakra-ui/react'
 import { Routes } from './constants'
 
+/**
+ * Root application component that defines the client-side routing structure.
+ *
+ * Conditionally renders the {@link Navbar} for authenticated users and sets up
+ * routes for login, dashboard, and messages pages. Unauthenticated users are
+ * redirected to login; authenticated users accessing `/login` are redirected
+ * to the dashboard. Any unknown paths fall back to the appropriate default.
+ *
+ * @returns The routed application layout.
+ */
 function App() {
   const { isAuthenticated } = useAuth()
 

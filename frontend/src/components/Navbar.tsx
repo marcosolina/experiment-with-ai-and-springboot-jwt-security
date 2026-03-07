@@ -3,6 +3,15 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { Routes } from '../constants'
 
+/**
+ * Top navigation bar displayed when the user is authenticated.
+ *
+ * Renders navigation links to the dashboard and messages pages with
+ * active-state highlighting based on the current route. Also shows the
+ * current username and a logout button.
+ *
+ * @returns The navigation bar UI.
+ */
 export default function Navbar() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()

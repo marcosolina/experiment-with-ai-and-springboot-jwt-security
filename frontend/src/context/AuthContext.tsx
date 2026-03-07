@@ -6,6 +6,15 @@ import { STORAGE_KEYS } from '../constants'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
+/**
+ * Provides authentication state and actions to the component tree via React Context.
+ *
+ * On mount, attempts to restore a previous session by refreshing the access token
+ * using a refresh token stored in localStorage. Exposes `login` and `logout`
+ * functions and tracks the current `user`, `isAuthenticated`, and `isLoading` state.
+ *
+ * @param props.children - Child components that will have access to the auth context.
+ */
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -68,6 +77,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   )
 }
 
+/**
+ * Custom hook that returns the current authentication context.
+ *
+ * Must be called from a component wrapped by {@link AuthProvider}.
+ *
+ * @returns The authentication context containing user state and auth actions.
+ * @throws Error if called outside of an {@link AuthProvider}.
+ */
 export function useAuth() {
   const context = useContext(AuthContext)
   if (!context) throw new Error('useAuth must be used within AuthProvider')

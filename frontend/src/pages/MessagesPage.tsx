@@ -9,6 +9,15 @@ import api from '../api/axiosConfig'
 import { API_ENDPOINTS } from '../api/constants'
 import type { Message, HealthStatus } from './interfaces'
 
+/**
+ * Messages page component providing full CRUD operations on messages.
+ *
+ * Displays a table of existing messages with delete actions, an input field
+ * to create new messages, and a health status badge indicating whether the
+ * resource server is connected to the supervisor auth server.
+ *
+ * @returns The messages management UI.
+ */
 export default function MessagesPage() {
   const [messages, setMessages] = useState<Message[]>([])
   const [newMessage, setNewMessage] = useState('')

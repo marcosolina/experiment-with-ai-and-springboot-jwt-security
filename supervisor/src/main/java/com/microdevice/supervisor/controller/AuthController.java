@@ -13,20 +13,44 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * REST controller handling authentication operations.
+ *
+ * <p>Provides endpoints for user login, registration, token refresh, logout,
+ * and the JWKS (JSON Web Key Set) endpoint for public key distribution to resource servers.</p>
+ */
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
+    /** Service for user authentication and registration. */
     private final UserService userService;
+
+    /** Service for JWT token generation and validation. */
     private final JwtService jwtService;
+
+    /** RSA key configuration for the JWKS endpoint. */
     private final RsaKeyConfig rsaKeyConfig;
 
+    /**
+     * Constructs the authentication controller with required dependencies.
+     *
+     * @param userService  the user service for authentication and registration
+     * @param jwtService   the JWT service for token operations
+     * @param rsaKeyConfig the RSA key configuration for JWKS
+     */
     public AuthController(UserService userService, JwtService jwtService, RsaKeyConfig rsaKeyConfig) {
         this.userService = userService;
         this.jwtService = jwtService;
         this.rsaKeyConfig = rsaKeyConfig;
     }
 
+    /**
+     * Authenticates a user and issues access and refresh tokens.
+     *
+     * @param request the login request containing username and password
+     * @return a {@link LoginResponse} with tokens on success, or a 401 error on failure
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         try {
@@ -45,6 +69,12 @@ public class AuthController {
         }
     }
 
+    /**
+     * Registers a new user account with the USER role.
+     *
+     * @param request the registration request containing username and password
+     * @return a success message with the username, or a 400 error if registration fails
+     */
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         try {
@@ -58,6 +88,15 @@ public class AuthController {
         }
     }
 
+    /**
+     * Refreshes an access token using a valid refresh token.
+     *
+     * <p>The old refresh token is revoked and a new token pair (access + refresh) is issued.
+     * This implements refresh token rotation for improved security.</p>
+     *
+     * @param request the refresh request containing the current refresh token
+     * @return a new {@link LoginResponse} with rotated tokens, or a 401 error if the refresh token is invalid
+     */
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(@RequestBody RefreshRequest request) {
         String refreshToken = request.refreshToken();
@@ -83,12 +122,26 @@ public class AuthController {
         ));
     }
 
+    /**
+     * Logs out a user by revoking their refresh token.
+     *
+     * @param request the logout request containing the refresh token to revoke
+     * @return a success message confirming logout
+     */
     @PostMapping("/logout")
     public ResponseEntity<?> logout(@RequestBody LogoutRequest request) {
         jwtService.revokeRefreshToken(request.refreshToken());
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
 
+    /**
+     * Exposes the JSON Web Key Set (JWKS) containing the server's RSA public key.
+     *
+     * <p>Resource servers use this endpoint to retrieve the public key for verifying
+     * RS256-signed JWT tokens issued by this authorization server.</p>
+     *
+     * @return the JWKS response containing the RSA public key in JWK format
+     */
     @GetMapping("/.well-known/jwks.json")
     public ResponseEntity<?> jwks() {
         RSAPublicKey publicKey = rsaKeyConfig.getPublicKey();

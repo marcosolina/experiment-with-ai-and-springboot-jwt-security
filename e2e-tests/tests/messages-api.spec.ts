@@ -5,7 +5,7 @@ import path from 'path'
 
 const SHARED_SECRET_BASE64 = 'bXktc3VwZXItc2VjcmV0LWtleS10aGF0LWlzLWF0LWxlYXN0LTI1Ni1iaXRz'
 const secret = Buffer.from(SHARED_SECRET_BASE64, 'base64')
-const MESSAGES_BASE = 'http://localhost:8082'
+const MESSAGES_BASE = process.env.MESSAGES_BASE || 'http://localhost:8082'
 const RESULTS_DIR = path.join(__dirname, '..', 'test-results', 'api-reports')
 
 function generateToken(overrides: {

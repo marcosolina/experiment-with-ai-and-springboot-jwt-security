@@ -1,0 +1,55 @@
+services:
+  supervisor:
+    build: ./supervisor
+    ports:
+      - "8081:8081"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/api/auth/.well-known/jwks.json"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  messages:
+    build: ./messages
+    ports:
+      - "8082:8082"
+    environment:
+      - JWT_SUPERVISOR_JWKSURL=http://supervisor:8081/api/auth/.well-known/jwks.json
+    depends_on:
+      supervisor:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/api/messages/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      supervisor:
+        condition: service_healthy
+      messages:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  e2e-tests:
+    build: ./e2e-tests
+    ports:
+      - "9323:9323"
+    environment:
+      - BASE_URL=http://frontend:80
+      - MESSAGES_BASE=http://messages:8082
+      - CI=true
+    depends_on:
+      frontend:
+        condition: service_healthy

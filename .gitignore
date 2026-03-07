@@ -1,19 +1,19 @@
 # Java / Maven
-**/target/
+**/target
 *.class
 *.jar
 *.war
 
 # Node / npm
-**/node_modules/
+**/node_modules
 **/package-lock.json
 
 # Frontend build output
 frontend/dist/
 
 # Playwright
-e2e-tests/test-results/
-e2e-tests/playwright-report/
+e2e-tests/test-results
+e2e-tests/playwright-report
 
 # IDE
 .idea/

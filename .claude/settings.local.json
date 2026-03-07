@@ -7,7 +7,10 @@
       "Bash(npx vite:*)",
       "Bash(mvn compile:*)",
       "Bash(npx playwright:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(docker compose:*)",
+      "Bash(netstat:*)",
+      "Bash(taskkill:*)"
     ]
   }
 }

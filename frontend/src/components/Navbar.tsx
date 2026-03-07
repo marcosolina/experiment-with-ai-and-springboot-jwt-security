@@ -1,6 +1,7 @@
 import { Flex, Heading, Text, Button, Spacer, HStack } from '@chakra-ui/react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { Routes } from '../constants'
 
 export default function Navbar() {
   const { user, logout } = useAuth()
@@ -9,7 +10,7 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     await logout()
-    navigate('/login')
+    navigate(Routes.LOGIN)
   }
 
   return (
@@ -17,19 +18,19 @@ export default function Navbar() {
       <Heading size="md">POC Security</Heading>
       <HStack ml={8} spacing={4}>
         <Button
-          variant={location.pathname === '/dashboard' ? 'solid' : 'ghost'}
+          variant={location.pathname === Routes.DASHBOARD ? 'solid' : 'ghost'}
           colorScheme="whiteAlpha"
           size="sm"
-          onClick={() => navigate('/dashboard')}
+          onClick={() => navigate(Routes.DASHBOARD)}
           data-testid="nav-dashboard"
         >
           Dashboard
         </Button>
         <Button
-          variant={location.pathname === '/messages' ? 'solid' : 'ghost'}
+          variant={location.pathname === Routes.MESSAGES ? 'solid' : 'ghost'}
           colorScheme="whiteAlpha"
           size="sm"
-          onClick={() => navigate('/messages')}
+          onClick={() => navigate(Routes.MESSAGES)}
           data-testid="nav-messages"
         >
           Messages

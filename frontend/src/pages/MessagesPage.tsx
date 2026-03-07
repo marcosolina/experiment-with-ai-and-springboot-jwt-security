@@ -6,18 +6,8 @@ import {
 } from '@chakra-ui/react'
 import { DeleteIcon } from '@chakra-ui/icons'
 import api from '../api/axiosConfig'
-
-interface Message {
-  id: number
-  content: string
-  author: string
-  createdAt: string
-}
-
-interface HealthStatus {
-  status: string
-  supervisorConnected: boolean
-}
+import { API_ENDPOINTS } from '../api/constants'
+import type { Message, HealthStatus } from './interfaces'
 
 export default function MessagesPage() {
   const [messages, setMessages] = useState<Message[]>([])
@@ -29,7 +19,7 @@ export default function MessagesPage() {
 
   const fetchMessages = useCallback(async () => {
     try {
-      const response = await api.get('/api/messages')
+      const response = await api.get(API_ENDPOINTS.MESSAGES)
       setMessages(response.data)
     } catch {
       toast({ title: 'Failed to fetch messages', status: 'error', duration: 3000 })
@@ -40,7 +30,7 @@ export default function MessagesPage() {
 
   const fetchHealth = useCallback(async () => {
     try {
-      const response = await api.get('/api/messages/health')
+      const response = await api.get(API_ENDPOINTS.MESSAGES_HEALTH)
       setHealth(response.data)
     } catch {
       setHealth(null)
@@ -56,7 +46,7 @@ export default function MessagesPage() {
     if (!newMessage.trim()) return
     setIsSubmitting(true)
     try {
-      await api.post('/api/messages', { content: newMessage })
+      await api.post(API_ENDPOINTS.MESSAGES, { content: newMessage })
       setNewMessage('')
       await fetchMessages()
       toast({ title: 'Message created', status: 'success', duration: 2000 })
@@ -69,7 +59,7 @@ export default function MessagesPage() {
 
   const handleDelete = async (id: number) => {
     try {
-      await api.delete(`/api/messages/${id}`)
+      await api.delete(`${API_ENDPOINTS.MESSAGES}/${id}`)
       await fetchMessages()
       toast({ title: 'Message deleted', status: 'success', duration: 2000 })
     } catch {

@@ -3,6 +3,7 @@ import {
 } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { Routes } from '../constants'
 
 export default function DashboardPage() {
   const { user } = useAuth()
@@ -33,7 +34,7 @@ export default function DashboardPage() {
             </VStack>
           </CardBody>
         </Card>
-        <Button colorScheme="blue" onClick={() => navigate('/messages')} data-testid="dashboard-go-messages">
+        <Button colorScheme="blue" onClick={() => navigate(Routes.MESSAGES)} data-testid="dashboard-go-messages">
           View Messages
         </Button>
       </VStack>

@@ -5,6 +5,7 @@ import {
 } from '@chakra-ui/react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
+import { Routes } from '../constants'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
@@ -20,7 +21,7 @@ export default function LoginPage() {
     setIsSubmitting(true)
     try {
       await login(username, password)
-      navigate('/dashboard')
+      navigate(Routes.DASHBOARD)
     } catch (err: unknown) {
       const axiosError = err as { response?: { data?: { message?: string } } }
       const message = axiosError?.response?.data?.message || 'Login failed. Please check your credentials.'

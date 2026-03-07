@@ -1,8 +1,11 @@
 import axios from 'axios'
+import type { QueuedRequest } from './interfaces'
+import { API_ENDPOINTS } from './constants'
+import { Routes, STORAGE_KEYS } from '../constants'
 
 let accessToken: string | null = null
 let isRefreshing = false
-let failedQueue: Array<{ resolve: (token: string) => void; reject: (error: unknown) => void }> = []
+let failedQueue: QueuedRequest[] = []
 
 const processQueue = (error: unknown, token: string | null = null) => {
   failedQueue.forEach(prom => {
@@ -48,25 +51,25 @@ api.interceptors.response.use(
       originalRequest._retry = true
       isRefreshing = true
 
-      const refreshToken = localStorage.getItem('refreshToken')
+      const refreshToken = localStorage.getItem(STORAGE_KEYS.REFRESH_TOKEN)
       if (!refreshToken) {
         isRefreshing = false
         return Promise.reject(error)
       }
 
       try {
-        const response = await axios.post('/api/auth/refresh', { refreshToken })
+        const response = await axios.post(API_ENDPOINTS.AUTH_REFRESH, { refreshToken })
         const { accessToken: newAccessToken, refreshToken: newRefreshToken } = response.data
         setAccessToken(newAccessToken)
-        localStorage.setItem('refreshToken', newRefreshToken)
+        localStorage.setItem(STORAGE_KEYS.REFRESH_TOKEN, newRefreshToken)
         processQueue(null, newAccessToken)
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`
         return api(originalRequest)
       } catch (refreshError) {
         processQueue(refreshError, null)
         setAccessToken(null)
-        localStorage.removeItem('refreshToken')
-        window.location.href = '/login'
+        localStorage.removeItem(STORAGE_KEYS.REFRESH_TOKEN)
+        window.location.href = Routes.LOGIN
         return Promise.reject(refreshError)
       } finally {
         isRefreshing = false

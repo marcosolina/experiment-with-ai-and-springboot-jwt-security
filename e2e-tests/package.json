@@ -1,0 +1,13 @@
+{
+  "name": "e2e-tests",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:ui": "npx playwright test --ui",
+    "test:headed": "npx playwright test --headed"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.45.0"
+  }
+}

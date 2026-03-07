@@ -1,0 +1,10 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: supervisor
+
+jwt:
+  access-token-expiration: 900000
+  refresh-token-expiration: 86400000

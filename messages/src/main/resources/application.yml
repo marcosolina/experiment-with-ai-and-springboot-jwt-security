@@ -1,0 +1,15 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: messages
+
+jwt:
+  supervisor:
+    jwks-url: http://localhost:8081/api/auth/.well-known/jwks.json
+    issuer: supervisor
+    jwks-refresh-interval: 60000
+  shared-secret:
+    key: "bXktc3VwZXItc2VjcmV0LWtleS10aGF0LWlzLWF0LWxlYXN0LTI1Ni1iaXRz"
+    issuer: shared-secret

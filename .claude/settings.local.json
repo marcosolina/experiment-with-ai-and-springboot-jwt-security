@@ -10,7 +10,8 @@
       "Bash(curl:*)",
       "Bash(docker compose:*)",
       "Bash(netstat:*)",
-      "Bash(taskkill:*)"
+      "Bash(taskkill:*)",
+      "Bash(xxd:*)"
     ]
   }
 }

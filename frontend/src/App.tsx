@@ -5,7 +5,7 @@ import MessagesPage from './pages/MessagesPage'
 import ProtectedRoute from './components/ProtectedRoute'
 import Navbar from './components/Navbar'
 import { useAuth } from './context/AuthContext'
-import { Box } from '@chakra-ui/react'
+import { Box, useColorModeValue } from '@chakra-ui/react'
 import { Routes } from './constants'
 
 /**
@@ -20,9 +20,10 @@ import { Routes } from './constants'
  */
 function App() {
   const { isAuthenticated } = useAuth()
+  const bg = useColorModeValue('gray.50', 'gray.800')
 
   return (
-    <Box minH="100vh" bg="gray.50">
+    <Box minH="100vh" bg={bg}>
       {isAuthenticated && <Navbar />}
       <RouterRoutes>
         <Route path={Routes.LOGIN} element={isAuthenticated ? <Navigate to={Routes.DASHBOARD} /> : <LoginPage />} />

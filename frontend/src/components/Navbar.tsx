@@ -1,4 +1,5 @@
-import { Flex, Heading, Text, Button, Spacer, HStack } from '@chakra-ui/react'
+import { Flex, Heading, Text, Button, Spacer, HStack, IconButton, useColorMode } from '@chakra-ui/react'
+import { MoonIcon, SunIcon } from '@chakra-ui/icons'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { Routes } from '../constants'
@@ -16,6 +17,7 @@ export default function Navbar() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
+  const { colorMode, toggleColorMode } = useColorMode()
 
   const handleLogout = async () => {
     await logout()
@@ -48,6 +50,15 @@ export default function Navbar() {
       <Spacer />
       <HStack spacing={4}>
         <Text fontSize="sm" data-testid="navbar-username">{user?.username}</Text>
+        <IconButton
+          aria-label="Toggle color mode"
+          icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+          size="sm"
+          variant="ghost"
+          colorScheme="whiteAlpha"
+          onClick={toggleColorMode}
+          data-testid="theme-toggle"
+        />
         <Button size="sm" colorScheme="red" onClick={handleLogout} data-testid="navbar-logout">
           Logout
         </Button>

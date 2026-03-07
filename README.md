@@ -38,13 +38,13 @@ The only prerequisites are **Git** and **Docker**. No Java, Node.js, or Maven ne
 ### Windows (PowerShell)
 
 ```powershell
-irm https://raw.githubusercontent.com/marcosolina/experiment-with-ai-and-springboot-jwt-security/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/marcosolina/experiment-with-ai-and-springboot-jwt-security/master/install.ps1 | iex
 ```
 
 ### macOS / Linux (bash)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/marcosolina/experiment-with-ai-and-springboot-jwt-security/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/marcosolina/experiment-with-ai-and-springboot-jwt-security/master/install.sh | bash
 ```
 
 ### Manual setup

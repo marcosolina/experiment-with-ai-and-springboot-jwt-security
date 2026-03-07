@@ -63,4 +63,7 @@ Write-Host "  To stop:  docker compose down" -ForegroundColor Gray
 Write-Host "  To logs:  docker compose logs -f" -ForegroundColor Gray
 Write-Host ""
 
+Start-Process "http://localhost:5173"
+Start-Process "http://localhost:9323"
+
 Pop-Location

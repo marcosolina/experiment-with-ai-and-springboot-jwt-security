@@ -62,3 +62,12 @@ echo ""
 echo "  To stop:  docker compose down"
 echo "  To logs:  docker compose logs -f"
 echo ""
+
+# Open browser
+if command -v xdg-open >/dev/null 2>&1; then
+    xdg-open "http://localhost:5173" 2>/dev/null &
+    xdg-open "http://localhost:9323" 2>/dev/null &
+elif command -v open >/dev/null 2>&1; then
+    open "http://localhost:5173"
+    open "http://localhost:9323"
+fi

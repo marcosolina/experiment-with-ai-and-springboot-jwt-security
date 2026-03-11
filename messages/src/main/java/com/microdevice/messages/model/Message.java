@@ -1,6 +1,6 @@
 package com.microdevice.messages.model;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 /**
  * Immutable domain model representing a message stored in-memory.
@@ -17,7 +17,7 @@ public class Message {
     private final String author;
 
     /** Timestamp indicating when the message was created. */
-    private final LocalDateTime createdAt;
+    private final Instant createdAt;
 
     /**
      * Constructs a new message with the given attributes.
@@ -27,7 +27,7 @@ public class Message {
      * @param author    the username of the author
      * @param createdAt the creation timestamp
      */
-    public Message(long id, String content, String author, LocalDateTime createdAt) {
+    public Message(long id, String content, String author, Instant createdAt) {
         this.id = id;
         this.content = content;
         this.author = author;
@@ -66,7 +66,7 @@ public class Message {
      *
      * @return the creation date-time
      */
-    public LocalDateTime getCreatedAt() {
+    public Instant getCreatedAt() {
         return createdAt;
     }
 }

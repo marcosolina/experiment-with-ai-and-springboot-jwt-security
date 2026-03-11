@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -43,9 +43,9 @@ public class MessageController {
     public MessageController(JwtValidationService jwtValidationService) {
         this.jwtValidationService = jwtValidationService;
 
-        messages.add(new Message(idGenerator.incrementAndGet(), "Welcome to the messaging system!", "system", LocalDateTime.now()));
-        messages.add(new Message(idGenerator.incrementAndGet(), "This is a sample message.", "admin", LocalDateTime.now()));
-        messages.add(new Message(idGenerator.incrementAndGet(), "JWT security is working!", "system", LocalDateTime.now()));
+        messages.add(new Message(idGenerator.incrementAndGet(), "Welcome to the messaging system!", "system", Instant.now()));
+        messages.add(new Message(idGenerator.incrementAndGet(), "This is a sample message.", "admin", Instant.now()));
+        messages.add(new Message(idGenerator.incrementAndGet(), "JWT security is working!", "system", Instant.now()));
     }
 
     /**
@@ -90,7 +90,7 @@ public class MessageController {
             idGenerator.incrementAndGet(),
             request.content(),
             authentication.getName(),
-            LocalDateTime.now()
+            Instant.now()
         );
         messages.add(message);
         return ResponseEntity.ok(toResponse(message));
